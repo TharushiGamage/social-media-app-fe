@@ -1,6 +1,32 @@
 import { Rss, MessageSquare, Video, Users, Bookmark, HelpCircle, Briefcase, Calendar, School } from "lucide-react";
+import { useEffect, useState } from "react";
+import { makeRequest } from "../axios";
+import { useUser, useAuth } from "@clerk/clerk-react";
 
 export default function Sidebar() {
+    const [friends, setFriends] = useState([]);
+    const { user } = useUser();
+    const { getToken } = useAuth();
+
+    useEffect(() => {
+        const getFriends = async () => {
+            try {
+                const token = await getToken();
+                // API Base: /users
+                // Endpoint: /friends/{userId}
+                if (user?.id) {
+                    const res = await makeRequest.get("/users/friends/" + user.id, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setFriends(res.data);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getFriends();
+    }, [user?.id, getToken]);
+
     return (
         <div className="flex-[3] h-[calc(100vh-64px)] overflow-y-scroll sticky top-16 hidden md:block">
             <div className="p-5">
@@ -47,15 +73,14 @@ export default function Sidebar() {
                 </button>
                 <hr className="my-5 border-gray-300" />
                 <ul className="m-0 p-0 list-none">
-                    {/* Friend List style placeholder */}
-                    <li className="flex items-center mb-4 cursor-pointer">
-                        <img className="w-8 h-8 rounded-full object-cover mr-3" src="https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="" />
-                        <span className="font-medium">Jane Doe</span>
-                    </li>
-                    <li className="flex items-center mb-4 cursor-pointer">
-                        <img className="w-8 h-8 rounded-full object-cover mr-3" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="" />
-                        <span className="font-medium">John Smith</span>
-                    </li>
+                    {friends.map((friend) => (
+                        <li key={friend._id || friend.id} className="flex items-center mb-4 cursor-pointer">
+                            <img className="w-8 h-8 rounded-full object-cover mr-3"
+                                src={friend.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"}
+                                alt="" />
+                            <span className="font-medium">{friend.username}</span>
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>
