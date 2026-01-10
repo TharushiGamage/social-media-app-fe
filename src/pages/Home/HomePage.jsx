@@ -3,12 +3,12 @@ import Sidebar from "../../components/Sidebar";
 import Feed from "../../components/Feed";
 import Rightbar from "../../components/Rightbar";
 
-export default function Home() {
+export default function Home({ onNavigate }) {
     return (
         <>
             <TopNavBar />
             <div className="flex w-full bg-gray-50">
-                <Sidebar />
+                <Sidebar onNavigate={onNavigate} currentPage="home" />
                 <Feed />
                 <Rightbar />
             </div>

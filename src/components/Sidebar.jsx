@@ -1,9 +1,9 @@
-import { Rss, MessageSquare, Video, Users, Bookmark, HelpCircle, Briefcase, Calendar, School } from "lucide-react";
+import { Rss, MessageSquare, Video, Users, Bookmark, HelpCircle, Briefcase, Calendar, School, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { makeRequest } from "../axios";
 import { useUser, useAuth } from "@clerk/clerk-react";
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate, currentPage = "home" }) {
     const [friends, setFriends] = useState([]);
     const { user } = useUser();
     const { getToken } = useAuth();
@@ -31,7 +31,23 @@ export default function Sidebar() {
         <div className="flex-[3] h-[calc(100vh-64px)] overflow-y-scroll sticky top-16 hidden md:block">
             <div className="p-5">
                 <ul className="m-0 p-0 list-none">
-                    <li className="flex items-center mb-5 cursor-pointer">
+                    <li
+                        className={`flex items-center mb-5 cursor-pointer p-2 rounded-lg transition-all ${currentPage === "profile"
+                                ? "bg-blue-100 text-blue-600"
+                                : "hover:bg-gray-100"
+                            }`}
+                        onClick={() => onNavigate?.("profile")}
+                    >
+                        <User className="mr-4" />
+                        <span className="font-semibold">Profile</span>
+                    </li>
+                    <li
+                        className={`flex items-center mb-5 cursor-pointer p-2 rounded-lg transition-all ${currentPage === "home"
+                                ? "bg-blue-100 text-blue-600"
+                                : "hover:bg-gray-100"
+                            }`}
+                        onClick={() => onNavigate?.("home")}
+                    >
                         <Rss className="mr-4" />
                         <span className="font-semibold">Feed</span>
                     </li>

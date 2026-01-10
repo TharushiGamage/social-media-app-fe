@@ -8,35 +8,34 @@ export default function Share() {
     const { getToken } = useAuth();
     const desc = useRef();
     const [file, setFile] = useState(null);
+    const [isSharing, setIsSharing] = useState(false);
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        setIsSharing(true);
         const newPost = {
             userId: user.id,
             desc: desc.current.value,
         };
 
-        if (file) {
-            const data = new FormData();
-            const fileName = Date.now() + file.name;
-            data.append("name", fileName);
-            data.append("file", file);
-            newPost.img = fileName;
-            try {
-                await makeRequest.post("/upload", data);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
         try {
+            if (file) {
+                const data = new FormData();
+                const fileName = Date.now() + file.name;
+                data.append("name", fileName);
+                data.append("file", file);
+                newPost.img = fileName;
+                await makeRequest.post("/upload", data);
+            }
+
             const token = await getToken();
             await makeRequest.post("/posts", newPost, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            window.location.reload(); // Simple reload to show new post
+            window.location.reload();
         } catch (err) {
             console.log(err);
+            setIsSharing(false);
         }
     };
 
@@ -78,7 +77,7 @@ export default function Share() {
                             <span className="text-sm font-medium text-gray-500">Feelings</span>
                         </div>
                     </div>
-                    <button className="bg-green-600 text-white font-medium mr-5 cursor-pointer py-2 px-4 rounded-md text-sm hover:bg-green-700 transition" type="submit">Share</button>
+                    <button className="bg-green-600 text-white font-medium mr-5 cursor-pointer py-2 px-4 rounded-md text-sm hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isSharing}>{isSharing ? "Sharing..." : "Share"}</button>
                 </form>
             </div>
         </div>

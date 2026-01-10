@@ -37,8 +37,8 @@ export default function Post({ post }) {
             } catch (err) {
                 // fallback or try query
                 try {
-                    const resQ = await makeRequest.get(`/users?userId=${post.userId}`);
-                    setUser(resQ.data);
+                    //const resQ = await makeRequest.get(`/users?userId=${post.userId}`);
+                    //setUser(resQ.data);
                 } catch (e) { console.log(e); }
             }
         };

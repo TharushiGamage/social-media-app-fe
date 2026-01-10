@@ -17,7 +17,7 @@ export default function Feed({ username }) {
                 // Otherwise, it's the home page, fetch timeline
                 const endpoint = username
                     ? `/posts/profile/${username}`
-                    : `/posts/timeline/${user?.id}`; // Assuming timeline requires userId in path or just /timeline
+                    : "/posts";
 
                 if (!username && !user?.id) return; // Wait for user to be loaded
 
